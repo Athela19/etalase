@@ -77,13 +77,13 @@ export default function Navbar({ mode = "default" }) {
     },
     {
       name: "Kelola Produk",
-      href: "/admin/kelola-products",
+      href: "/kelola-produk",
       icon: <Package size={18} />,
       roleMenu: "user",
     },
     {
       name: "Settings",
-      href: "/admin/settings",
+      href: "/settings",
       icon: <Settings size={18} />,
       roleMenu: "user",
     },

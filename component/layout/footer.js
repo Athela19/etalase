@@ -48,8 +48,8 @@ export default function Footer() {
   const navigations = [
     { label: "Beranda", href: "/", role: "all" },
     { label: "Wishlist", href: "/wishlist", role: "all" },
-    { label: "Kelola Produk", href: "/admin/kelola-products", role: "user" },
-    { label: "Settings", href: "/admin/settings", role: "user" },
+    { label: "Kelola Produk", href: "/kelola-produk", role: "user" },
+    { label: "Settings", href: "/settings", role: "user" },
   ];
 
   // 🔹 Media Sosial (ambil dari config)
