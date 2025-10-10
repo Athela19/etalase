@@ -144,7 +144,7 @@ export default function ProductsPage() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto p-6 space-y-6">
+    <main className="max-w-6xl mx-auto p-6 space-y-6 pt-24">
       {/* Header */}
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
