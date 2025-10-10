@@ -12,8 +12,11 @@ export default function LayoutClient({ children }) {
   const defaultMode = ["/"];
   const logoutPaths = ["/wishlist", "/settings"];
 
-  if (defaultMode.includes(pathname)) mode = "default";
-  else if (logoutPaths.includes(pathname)) mode = "logout";
+  if (defaultMode.includes(pathname)) {
+    mode = "default";
+  } else if (logoutPaths.includes(pathname) || pathname.startsWith("/produk/")) {
+    mode = "logout";
+  }
 
   return (
     <>

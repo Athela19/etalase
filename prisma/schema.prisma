@@ -23,7 +23,7 @@ model Product {
   shopee    String?
   category  String
   price     Float
-  image     String
+  image     String[]
   description String
   active    Boolean  @default(true)
   createdAt DateTime @default(now())

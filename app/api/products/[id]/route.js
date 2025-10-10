@@ -1,52 +1,54 @@
-export const runtime = "nodejs";
-export const revalidate = 0;
-
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// Fungsi bantu untuk format URL (menambah https:// bila perlu)
+// ✅ Fungsi bantu agar URL otomatis diawali https:// bila belum
 const toUrl = (u = "") => (u && /^https?:\/\//i.test(u) ? u : u ? `https://${u}` : "");
 
-// Fungsi bantu untuk parsing ID dan validasi
-const parseId = (params) => {
-  const id = Number(params?.id);
-  if (!Number.isInteger(id)) throw new Error("ID tidak valid");
-  return id;
-};
-
-// ✅ GET /api/products/:id — Ambil produk berdasarkan ID
+// ========================
+// GET /api/products/:id
+// ========================
 export async function GET(_req, { params }) {
   try {
-    const id = parseId(params);
-    const r = await prisma.product.findUnique({ where: { id } });
-    if (!r) return NextResponse.json({ error: "Produk tidak ditemukan" }, { status: 404 });
+    const { id } = await params;
+    const productId = Number(id);
+    if (!Number.isInteger(productId)) throw new Error("ID tidak valid");
+
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) {
+      return NextResponse.json({ error: "Produk tidak ditemukan" }, { status: 404 });
+    }
 
     return NextResponse.json({
-      id: r.id,
-      name: r.name ?? "",
-      whatsapp: r.whatsapp ?? "",
-      tiktok: toUrl(r.tiktok ?? ""),
-      shopee: toUrl(r.shopee ?? ""),
-      category: r.category ?? "",
-      price: Number(r.price ?? 0),
-      image: r.image ?? "",
-      description: r.description ?? "",
-      active: r.active ?? true,
-      createdAt: r.createdAt,
+      id: product.id,
+      name: product.name ?? "",
+      whatsapp: product.whatsapp ?? "",
+      tiktok: toUrl(product.tiktok ?? ""),
+      shopee: toUrl(product.shopee ?? ""),
+      category: product.category ?? "",
+      price: Number(product.price ?? 0),
+      image: Array.isArray(product.image) ? product.image : [],
+      description: product.description ?? "",
+      active: product.active ?? true,
+      createdAt: product.createdAt,
     });
-  } catch (e) {
-    console.error("GET /products/:id error:", e);
+  } catch (error) {
+    console.error("GET /products/:id error:", error);
     return NextResponse.json(
-      { error: "INTERNAL_ERROR", message: String(e?.message || e) },
+      { error: "INTERNAL_ERROR", message: String(error?.message || error) },
       { status: 500 }
     );
   }
 }
 
-// ✅ PUT /api/products/:id — Partial update (fleksibel)
+// ========================
+// PUT /api/products/:id
+// ========================
 export async function PUT(req, { params }) {
   try {
-    const id = parseId(params);
+    const { id } = await params;
+    const productId = Number(id);
+    if (!Number.isInteger(productId)) throw new Error("ID tidak valid");
+
     const body = await req.json();
     const data = {};
 
@@ -56,11 +58,28 @@ export async function PUT(req, { params }) {
     if ("shopee" in body) data.shopee = toUrl(body.shopee);
     if ("category" in body) data.category = body.category;
     if ("price" in body) data.price = parseFloat(body.price);
-    if ("image" in body) data.image = body.image;
+
+    // ✅ Validasi gambar
+    if ("image" in body) {
+      if (!Array.isArray(body.image)) {
+        return NextResponse.json(
+          { error: "VALIDATION", message: "Field 'image' harus berupa array URL gambar." },
+          { status: 400 }
+        );
+      }
+      if (body.image.length < 1 || body.image.length > 5) {
+        return NextResponse.json(
+          { error: "VALIDATION", message: "Jumlah gambar harus 1-5." },
+          { status: 400 }
+        );
+      }
+      data.image = body.image;
+    }
+
     if ("description" in body) data.description = body.description;
     if ("active" in body) data.active = Boolean(body.active);
 
-    const updated = await prisma.product.update({ where: { id }, data });
+    const updated = await prisma.product.update({ where: { id: productId }, data });
 
     return NextResponse.json({
       id: updated.id,
@@ -70,30 +89,35 @@ export async function PUT(req, { params }) {
       shopee: toUrl(updated.shopee ?? ""),
       category: updated.category ?? "",
       price: Number(updated.price ?? 0),
-      image: updated.image ?? "",
+      image: Array.isArray(updated.image) ? updated.image : [],
       description: updated.description ?? "",
       active: updated.active ?? true,
       createdAt: updated.createdAt,
     });
-  } catch (e) {
-    console.error("PUT /products/:id error:", e);
+  } catch (error) {
+    console.error("PUT /products/:id error:", error);
     return NextResponse.json(
-      { error: "INTERNAL_ERROR", message: String(e?.message || e) },
+      { error: "INTERNAL_ERROR", message: String(error?.message || error) },
       { status: 500 }
     );
   }
 }
 
-// ✅ DELETE /api/products/:id — Hapus produk berdasarkan ID
+// ========================
+// DELETE /api/products/:id
+// ========================
 export async function DELETE(_req, { params }) {
   try {
-    const id = parseId(params);
-    await prisma.product.delete({ where: { id } });
+    const { id } = await params;
+    const productId = Number(id);
+    if (!Number.isInteger(productId)) throw new Error("ID tidak valid");
+
+    await prisma.product.delete({ where: { id: productId } });
     return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error("DELETE /products/:id error:", e);
+  } catch (error) {
+    console.error("DELETE /products/:id error:", error);
     return NextResponse.json(
-      { error: "INTERNAL_ERROR", message: String(e?.message || e) },
+      { error: "INTERNAL_ERROR", message: String(error?.message || error) },
       { status: 500 }
     );
   }
