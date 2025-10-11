@@ -13,21 +13,21 @@ export default function Footer() {
   const pathname = usePathname();
 
   // 🔹 Tentukan di halaman mana Footer muncul
-  const showNavbarOn = ["/"];
-  const showNavbar = showNavbarOn.includes(pathname);
+  const showFooterOf = ["/etalase-admin"];
+  const hideFooter = showFooterOf.includes(pathname);
 
   // 🔹 Cek apakah user login dari cookie
   useEffect(() => {
-      const checkUser = () => {
-        const session = Cookies.get("session");
-        if (session === "logged-in")
-          setUser({ name: "Admin", email: "admin@etalase.com" });
-        else setUser(null);
-      };
-      checkUser();
-      window.addEventListener("user-login", checkUser);
-      return () => window.removeEventListener("user-login", checkUser);
-    }, []);
+    const checkUser = () => {
+      const session = Cookies.get("session");
+      if (session === "logged-in")
+        setUser({ name: "Admin", email: "admin@etalase.com" });
+      else setUser(null);
+    };
+    checkUser();
+    window.addEventListener("user-login", checkUser);
+    return () => window.removeEventListener("user-login", checkUser);
+  }, []);
 
   // 🔹 Ambil data config dari API
   useEffect(() => {
@@ -50,6 +50,7 @@ export default function Footer() {
     { label: "Wishlist", href: "/wishlist", role: "all" },
     { label: "Kelola Produk", href: "/kelola-produk", role: "user" },
     { label: "Settings", href: "/settings", role: "user" },
+    { label: "Kategori", href: "/kategori", role: "all" },
   ];
 
   // 🔹 Media Sosial (ambil dari config)
@@ -84,7 +85,7 @@ export default function Footer() {
   );
 
   // 🔹 Jika halaman tidak termasuk daftar, jangan tampilkan Footer
-  if (!showNavbar) return null;
+  if (hideFooter) return null;
 
   return (
     <footer className="bg-background/80 backdrop-blur-md border-t border-slate-200 mt-20">

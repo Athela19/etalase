@@ -10,11 +10,15 @@ export default function LayoutClient({ children }) {
 
   let mode = "hidden";
   const defaultMode = ["/"];
-  const logoutPaths = ["/wishlist", "/settings"];
+  const logoutPaths = ["/wishlist", "/settings", "/kategori"];
 
   if (defaultMode.includes(pathname)) {
     mode = "default";
-  } else if (logoutPaths.includes(pathname) || pathname.startsWith("/produk/")) {
+  } else if (
+    logoutPaths.includes(pathname) ||
+    pathname.startsWith("/kategori/") ||
+    pathname.startsWith("/produk/")
+  ) {
     mode = "logout";
   }
 

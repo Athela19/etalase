@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Menu,
   X,
+  Tag
 } from "lucide-react";
 import Cookies from "js-cookie";
 
@@ -73,6 +74,12 @@ export default function Navbar({ mode = "default" }) {
       name: "Wishlist",
       href: "/wishlist",
       icon: <Heart size={18} />,
+      roleMenu: "all",
+    },
+    {
+      name: "Kategori",
+      href: "/kategori",
+      icon: <Tag size={18} />,
       roleMenu: "all",
     },
     {
@@ -229,7 +236,9 @@ export default function Navbar({ mode = "default" }) {
                       key={item.name}
                       href={item.href}
                       className={`flex items-center gap-2 hover:text-primary transition-colors ${
-                        pathname === item.href ? "text-primary" : "text-slate-700"
+                        pathname === item.href
+                          ? "text-primary"
+                          : "text-slate-700"
                       }`}
                       onClick={handleCloseSidebar}
                     >
