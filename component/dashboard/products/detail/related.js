@@ -4,9 +4,18 @@ import Image from "next/image";
 import { Heart } from "lucide-react";
 import Card from "@/component/reusable/card";
 import { useRouter } from "next/navigation";
+import { useWishlistStore } from "@/store/wishlistStore";
+import { useEffect } from "react";
 
-export default function RelatedProducts({ products, wishlist, toggleWishlist }) {
+export default function RelatedProducts({ products }) {
   const router = useRouter();
+  const { wishlist, toggleWishlist, loadWishlist } = useWishlistStore();
+
+  // Ambil wishlist dari cookie saat mount
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
 
   const truncate = (text, limit) =>
@@ -15,7 +24,7 @@ export default function RelatedProducts({ products, wishlist, toggleWishlist }) 
   if (!products || products.length === 0) return null;
 
   return (
-    <div className="p-4">
+    <div>
       <h3 className="text-lg font-semibold mb-4">Produk Terkait</h3>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {products.map((product) => {
@@ -36,7 +45,9 @@ export default function RelatedProducts({ products, wishlist, toggleWishlist }) 
               >
                 <Heart
                   size={18}
-                  className={`${isLoved ? "fill-red-500 text-red-500" : "text-red-500"} transition-all`}
+                  className={`${
+                    isLoved ? "fill-red-500 text-red-500" : "text-red-500"
+                  } transition-all`}
                 />
               </button>
 
@@ -46,7 +57,8 @@ export default function RelatedProducts({ products, wishlist, toggleWishlist }) 
                   src={
                     Array.isArray(product.image)
                       ? product.image[0]?.trimStart() || "/no-image.png"
-                      : product.image?.split(",")[0]?.trimStart() || "/no-image.png"
+                      : product.image?.split(",")[0]?.trimStart() ||
+                        "/no-image.png"
                   }
                   width={400}
                   height={300}
@@ -66,7 +78,11 @@ export default function RelatedProducts({ products, wishlist, toggleWishlist }) 
 
                 <div className="flex flex-col mt-auto w-full">
                   <span className="block mt-2 font-bold text-slate-800 text-sm">
-                    Rp {truncate(Number(product.price).toLocaleString("id-ID"), isDesktop ? 25 : 15)}
+                    Rp{" "}
+                    {truncate(
+                      Number(product.price).toLocaleString("id-ID"),
+                      isDesktop ? 25 : 15
+                    )}
                   </span>
 
                   <button

@@ -41,28 +41,30 @@ export default function ProdukPage({ productId }) {
     }
   }, [wishlist]);
 
-  // Fetch produk
+  // Fetch produk & produk terkait
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`/api/products/${productId}`);
         const data = await res.json();
         setProduct(data);
 
-        // Atur gambar utama
         const imgs = Array.isArray(data.image)
           ? data.image
           : data.image?.split(",") || [];
         setSelectedImage(imgs[0] || "/placeholder.png");
 
-        // Fetch produk terkait berdasarkan kategori
-        if (data.category) {
-          const relatedRes = await fetch(
-            `/api/products?category=${encodeURIComponent(data.category)}&excludeId=${data.id}`
-          );
-          const relatedData = await relatedRes.json();
-          setRelated(relatedData || []);
-        }
+        // Fetch produk lain untuk related
+        const allRes = await fetch(`/api/products`);
+        const allProducts = await allRes.json();
+
+        // Produk dengan kategori sama tapi bukan produk ini
+        const relatedData = allProducts.filter(
+          (p) => p.category === data.category && p.id !== data.id && p.active
+        );
+
+        setRelated(relatedData || []);
       } catch (err) {
         console.error(err);
       } finally {
@@ -88,12 +90,11 @@ export default function ProdukPage({ productId }) {
     );
 
   const isInWishlist = wishlist.some((item) => item.id === product.id);
-  const toggleWishlist = () => {
-    setWishlist((prev) =>
-      isInWishlist
-        ? prev.filter((item) => item.id !== product.id)
-        : [...prev, product]
-    );
+  const toggleWishlist = (item) => {
+    setWishlist((prev) => {
+      const exists = prev.some((p) => p.id === item.id);
+      return exists ? prev.filter((p) => p.id !== item.id) : [...prev, item];
+    });
   };
 
   const images = Array.isArray(product.image)
@@ -102,7 +103,7 @@ export default function ProdukPage({ productId }) {
 
   return (
     <div className="w-full flex flex-col gap-10 pt-18">
-      {/* BAGIAN GAMBAR & INFO PRODUK */}
+      {/* GAMBAR & INFO PRODUK */}
       <div className="flex flex-col sm:flex-row w-full gap-6">
         {/* GAMBAR */}
         <div className="flex flex-col md:flex-row w-full sm:w-1/2 gap-2 p-4">
@@ -138,7 +139,7 @@ export default function ProdukPage({ productId }) {
           </div>
         </div>
 
-        {/* INFORMASI */}
+        {/* INFORMASI PRODUK */}
         <div className="flex flex-col justify-between w-full sm:w-1/2 p-4">
           <div>
             <p className="text-sm text-primary mb-3">
@@ -177,7 +178,12 @@ export default function ProdukPage({ productId }) {
                     rel="noopener noreferrer"
                     className="hover:scale-110 transition-transform border border-primary hover:bg-primary/20 rounded-lg p-2"
                   >
-                    <Image src="/whatsapp.png" alt="WhatsApp" width={40} height={40} />
+                    <Image
+                      src="/whatsapp.png"
+                      alt="WhatsApp"
+                      width={40}
+                      height={40}
+                    />
                   </a>
                 )}
                 {product.tiktok && (
@@ -187,7 +193,12 @@ export default function ProdukPage({ productId }) {
                     rel="noopener noreferrer"
                     className="hover:scale-110 transition-transform border border-primary hover:bg-primary/20 rounded-lg p-2"
                   >
-                    <Image src="/tiktok.png" alt="TikTok" width={40} height={40} />
+                    <Image
+                      src="/tiktok.png"
+                      alt="TikTok"
+                      width={40}
+                      height={40}
+                    />
                   </a>
                 )}
                 {product.shopee && (
@@ -195,15 +206,20 @@ export default function ProdukPage({ productId }) {
                     href={toUrl(product.shopee)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:scale-110 transition-transform border border-primary hover:bg-primary/20 rounded-lg p-2 "
+                    className="hover:scale-110 transition-transform border border-primary hover:bg-primary/20 rounded-lg p-2"
                   >
-                    <Image src="/shopee.png" alt="Shopee" width={40} height={40} />
+                    <Image
+                      src="/shopee.png"
+                      alt="Shopee"
+                      width={40}
+                      height={40}
+                    />
                   </a>
                 )}
               </div>
 
               <button
-                onClick={toggleWishlist}
+                onClick={() => toggleWishlist(product)}
                 className={`w-full py-3 md:py-2 rounded-lg font-medium border flex items-center justify-center gap-2 transition ${
                   isInWishlist
                     ? "bg-red-100 text-red-600 border-red-400 hover:bg-red-200"
@@ -211,7 +227,9 @@ export default function ProdukPage({ productId }) {
                 }`}
               >
                 <ShoppingCart size={20} />
-                {isInWishlist ? "Hapus dari keranjang" : "Tambahkan ke keranjang"}
+                {isInWishlist
+                  ? "Hapus dari keranjang"
+                  : "Tambahkan ke keranjang"}
               </button>
             </div>
           </div>
@@ -219,7 +237,14 @@ export default function ProdukPage({ productId }) {
       </div>
 
       {/* PRODUK TERKAIT */}
-      <RelatedProducts products={related} wishlist={wishlist || []} toggleWishlist={toggleWishlist} />
+      <div className="p-4">
+        {" "}
+        <RelatedProducts
+          products={related}
+          wishlist={wishlist}
+          toggleWishlist={toggleWishlist}
+        />
+      </div>
     </div>
   );
 }

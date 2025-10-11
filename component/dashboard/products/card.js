@@ -4,9 +4,20 @@ import Image from "next/image";
 import { Heart } from "lucide-react";
 import Card from "@/component/reusable/card";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useWishlistStore } from "@/store/wishlistStore";
 
-export default function ProductCard({ product, isLoved, toggleWishlist }) {
+export default function ProductCard({ product }) {
   const router = useRouter();
+  const { wishlist, toggleWishlist, loadWishlist } = useWishlistStore();
+
+  // Muat wishlist dari cookie saat pertama kali render
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
+  const isLoved = wishlist.some((item) => item.id === product.id);
+
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
 
   const truncate = (text, limit) =>
@@ -24,7 +35,9 @@ export default function ProductCard({ product, isLoved, toggleWishlist }) {
       >
         <Heart
           size={18}
-          className={`${isLoved ? "fill-red-500 text-red-500" : "text-red-500"} transition-all`}
+          className={`${
+            isLoved ? "fill-red-500 text-red-500" : "text-red-500"
+          } transition-all`}
         />
       </button>
 
@@ -54,7 +67,11 @@ export default function ProductCard({ product, isLoved, toggleWishlist }) {
 
         <div className="flex flex-col mt-auto w-full">
           <span className="block mt-2 font-bold text-slate-800 text-sm">
-            Rp {truncate(Number(product.price).toLocaleString("id-ID"), isDesktop ? 25 : 15)}
+            Rp{" "}
+            {truncate(
+              Number(product.price).toLocaleString("id-ID"),
+              isDesktop ? 25 : 15
+            )}
           </span>
 
           <button
