@@ -101,7 +101,7 @@ export default function Navbar({ mode = "default" }) {
             className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
           >
             <LogOut size={20} />
-            <span className="font-semibold text-sm">Keluar</span>
+            <span className="font-semibold text-sm">Kembali</span>
           </button>
         </div>
       </header>
