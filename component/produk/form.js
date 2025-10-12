@@ -253,13 +253,13 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
             <div className="flex flex-wrap gap-2 mt-3">
               {form.image.map((url) => (
                 <div key={url} className="relative group">
-<Image
-  src={url}
-  alt="Gambar produk"
-  width={96} // sama dengan w-24
-  height={96} // sama dengan h-24
-  className="object-cover rounded border"
-/>
+                  <Image
+                    src={url}
+                    alt="Gambar produk"
+                    width={96} // sama dengan w-24
+                    height={96} // sama dengan h-24
+                    className="object-cover rounded border"
+                  />
                   <button
                     type="button"
                     onClick={() => removeImage(url)}

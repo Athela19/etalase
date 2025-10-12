@@ -11,9 +11,10 @@ import {
   ChevronDown,
   Menu,
   X,
-  Tag
+  Tag,
 } from "lucide-react";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 export default function Navbar({ mode = "default" }) {
   const pathname = usePathname();
@@ -21,6 +22,8 @@ export default function Navbar({ mode = "default" }) {
   const [scrolled, setScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [config, setConfig] = useState(null);
+
 
   useEffect(() => {
     const checkUser = () => {
@@ -39,7 +42,17 @@ export default function Navbar({ mode = "default" }) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await axios.get("/api/config");
+        if (res.data) setConfig(res.data);
+      } catch (err) {
+        console.error("Gagal mengambil config:", err);
+      }
+    };
+    fetchConfig();
+  }, []);
   if (mode === "hidden") return null; // 🔹 mode hilang sepenuhnya
 
   // 🔹 Fungsi animasi sidebar
@@ -136,7 +149,7 @@ export default function Navbar({ mode = "default" }) {
               scrolled ? "text-primary/90 text-lg" : "text-black text-xl"
             }`}
           >
-            Etalase
+            {config?.storeName || "Etalase"}
           </Link>
 
           {/* Menu Desktop */}

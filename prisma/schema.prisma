@@ -46,5 +46,9 @@ model Config {
   whatsappNumber  String?
   whatsappMessage String?
   primaryColor    String?   @default("#3b82f6")
+  storeName       String?
+  description     String?
+  address         String[]
+  urlAddress      String[]
   updatedAt       DateTime  @updatedAt
 }
