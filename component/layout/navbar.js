@@ -84,7 +84,7 @@ export default function Navbar({ mode = "default" }) {
     },
     {
       name: "Kelola Produk",
-      href: "/kelola-produk",
+      href: "/produk/kelola",
       icon: <Package size={18} />,
       roleMenu: "user",
     },

@@ -48,7 +48,7 @@ export default function Footer() {
   const navigations = [
     { label: "Beranda", href: "/", role: "all" },
     { label: "Wishlist", href: "/wishlist", role: "all" },
-    { label: "Kelola Produk", href: "/kelola-produk", role: "user" },
+    { label: "Kelola Produk", href: "/produk/kelola", role: "user" },
     { label: "Settings", href: "/settings", role: "user" },
     { label: "Kategori", href: "/kategori", role: "all" },
   ];

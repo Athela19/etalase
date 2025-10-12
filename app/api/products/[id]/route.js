@@ -32,7 +32,7 @@ export async function GET(_req, { params }) {
       createdAt: product.createdAt,
     });
   } catch (error) {
-    console.error("GET /products/:id error:", error);
+    console.error("[GET /api/products/:id] error:", error);
     return NextResponse.json(
       { error: "INTERNAL_ERROR", message: String(error?.message || error) },
       { status: 500 }
@@ -52,6 +52,7 @@ export async function PUT(req, { params }) {
     const body = await req.json();
     const data = {};
 
+    // 🔹 Field umum
     if ("name" in body) data.name = body.name;
     if ("whatsapp" in body) data.whatsapp = body.whatsapp;
     if ("tiktok" in body) data.tiktok = toUrl(body.tiktok);
@@ -59,7 +60,7 @@ export async function PUT(req, { params }) {
     if ("category" in body) data.category = body.category;
     if ("price" in body) data.price = parseFloat(body.price);
 
-    // ✅ Validasi gambar
+    // 🔹 Validasi gambar (UploadThing URL)
     if ("image" in body) {
       if (!Array.isArray(body.image)) {
         return NextResponse.json(
@@ -67,19 +68,25 @@ export async function PUT(req, { params }) {
           { status: 400 }
         );
       }
+
       if (body.image.length < 1 || body.image.length > 5) {
         return NextResponse.json(
-          { error: "VALIDATION", message: "Jumlah gambar harus 1-5." },
+          { error: "VALIDATION", message: "Jumlah gambar harus antara 1–5." },
           { status: 400 }
         );
       }
-      data.image = body.image;
+
+      const safeImages = body.image.map((url) => toUrl(url));
+      data.image = safeImages;
     }
 
     if ("description" in body) data.description = body.description;
     if ("active" in body) data.active = Boolean(body.active);
 
-    const updated = await prisma.product.update({ where: { id: productId }, data });
+    const updated = await prisma.product.update({
+      where: { id: productId },
+      data,
+    });
 
     return NextResponse.json({
       id: updated.id,
@@ -95,7 +102,7 @@ export async function PUT(req, { params }) {
       createdAt: updated.createdAt,
     });
   } catch (error) {
-    console.error("PUT /products/:id error:", error);
+    console.error("[PUT /api/products/:id] error:", error);
     return NextResponse.json(
       { error: "INTERNAL_ERROR", message: String(error?.message || error) },
       { status: 500 }
@@ -108,14 +115,15 @@ export async function PUT(req, { params }) {
 // ========================
 export async function DELETE(_req, { params }) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const productId = Number(id);
     if (!Number.isInteger(productId)) throw new Error("ID tidak valid");
 
     await prisma.product.delete({ where: { id: productId } });
+
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("DELETE /products/:id error:", error);
+    console.error("[DELETE /api/products/:id] error:", error);
     return NextResponse.json(
       { error: "INTERNAL_ERROR", message: String(error?.message || error) },
       { status: 500 }
