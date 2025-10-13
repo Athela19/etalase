@@ -299,7 +299,7 @@ export default function SettingsConfig() {
       </div>
 
       {/* Tombol Batal & Simpan */}
-      <div className="flex justify-end gap-2 mt-4 flex-col sm:flex-row">
+      <div className="flex justify-end gap-2 mt-4 flex-row">
         <button
           onClick={handleCancel}
           className="border border-slate-300 px-6 py-2 rounded-lg hover:bg-slate-100 transition-all w-full sm:w-auto"

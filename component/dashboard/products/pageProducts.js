@@ -5,6 +5,7 @@ import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import Cookies from "js-cookie";
 import ProductCard from "./card";
 import ProductModal from "./modal";
+import NoData from "@/component/reusable/noData";
 
 export default function ProductList() {
   const [activeCategory, setActiveCategory] = useState("Semua");
@@ -174,8 +175,8 @@ export default function ProductList() {
             ))}
 
         {!loading && currentProducts.length === 0 && (
-          <div className="col-span-full text-center text-slate-500 py-10">
-            Tidak ada produk ditemukan.
+          <div className="min-h-[300px] justify-center col-span-full flex">
+            <NoData message="Produk tidak ditemukan" />
           </div>
         )}
       </div>

@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import axios from "axios";
+import  {useConfig}  from "@/lib/config"; // pastikan named import
 
 export default function GlobalColorProvider() {
+  const { config, loading } = useConfig();
+
   useEffect(() => {
-    axios.get("/api/config").then(res => {
-      const color = res.data?.primaryColor || "#3b82f6";
+    if (!loading) {
+      const color = config?.primaryColor || "#3b82f6";
       document.documentElement.style.setProperty("--primary", color);
-    });
-  }, []);
+    }
+  }, [config, loading]);
 
   return null; // tidak render apa pun
 }

@@ -8,6 +8,7 @@ import Card from "@/component/reusable/card";
 import ConfirmModal from "@/component/reusable/modal";
 import { useWishlistStore } from "@/store/wishlistStore";
 import RelatedProducts from "@/component/dashboard/products/detail/related";
+import NoData from "../reusable/noData";
 
 export default function Wishlist() {
   const { wishlist, loadWishlist, toggleWishlist } = useWishlistStore();
@@ -85,9 +86,7 @@ export default function Wishlist() {
     <div className="p-4 mt-24 max-w-md md:max-w-screen mx-auto md:mx-12">
       {/* 🔸 Jika wishlist kosong */}
       {products.length === 0 ? (
-        <p className="text-gray-500 text-center mt-8">
-          Tidak ada produk di wishlist
-        </p>
+          <NoData message="Wishlist Anda kosong" />
       ) : (
         <div className="flex flex-col gap-4 mt-4">
           {products.map((item) => {

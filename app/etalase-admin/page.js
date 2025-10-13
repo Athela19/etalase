@@ -58,7 +58,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring focus:ring-primary"
               placeholder="Masukkan Email"
             />
           </div>
@@ -70,7 +70,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={2}
-              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring focus:ring-primary"
               placeholder="Masukkan Password"
             />
           </div>
@@ -78,7 +78,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-md transition duration-200 disabled:opacity-50"
+            className="w-full bg-primary hover:bg-primary/80 text-white font-medium py-2 rounded-md transition duration-200 disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

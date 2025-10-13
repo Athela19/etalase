@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { usePathname } from "next/navigation";
+import {useConfig} from "@/lib/config";
 
 export default function Footer() {
   const [user, setUser] = useState(null);
-  const [config, setConfig] = useState(null);
   const pathname = usePathname();
+  const { config, loading } = useConfig();
 
   // 🔹 Halaman yang tidak menampilkan footer
   const hideFooterOn = ["/etalase-admin"];
@@ -28,19 +29,6 @@ export default function Footer() {
     checkUser();
     window.addEventListener("user-login", checkUser);
     return () => window.removeEventListener("user-login", checkUser);
-  }, []);
-
-  // 🔹 Ambil data config dari API
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const res = await axios.get("/api/config");
-        if (res.data) setConfig(res.data);
-      } catch (err) {
-        console.error("Gagal mengambil config:", err);
-      }
-    };
-    fetchConfig();
   }, []);
 
   // 🔹 Navigasi menu

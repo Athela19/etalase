@@ -5,9 +5,19 @@ import { Star, X } from "lucide-react";
 import axios from "axios";
 import Card from "../reusable/card";
 import ConfirmModal from "../reusable/modal";
+import NoData from "../reusable/noData";
 
 /* ===================== 🔸 MODAL TESTIMONI 🔸 ===================== */
-function ModalTestimoni({ isOpen, onClose, onSubmit, form, setForm, rating, setRating, isEdit }) {
+function ModalTestimoni({
+  isOpen,
+  onClose,
+  onSubmit,
+  form,
+  setForm,
+  rating,
+  setRating,
+  isEdit,
+}) {
   if (!isOpen) return null;
 
   return (
@@ -124,7 +134,9 @@ export default function TestimoniPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get("/api/testimoni", { withCredentials: true });
+        const res = await axios.get("/api/testimoni", {
+          withCredentials: true,
+        });
         setTestimonials(res.data);
         try {
           const me = await axios.get("/api/testimoni/getMe", {
@@ -144,7 +156,8 @@ export default function TestimoniPage() {
   // Avatar Color
   const stringToColor = (str) => {
     let hash = 0;
-    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < str.length; i++)
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
     const hue = Math.abs(hash % 360);
     return `hsl(${hue}, 70%, 55%)`;
   };
@@ -169,40 +182,51 @@ export default function TestimoniPage() {
   }, [testimonials]);
 
   // Tambah/Edit testimoni
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    let updatedData;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let updatedData;
 
-    if (myTestimoni) {
-      const res = await axios.put(`/api/testimoni/${myTestimoni.id}`, { ...form, rating });
-      updatedData = res.data.testimoni; // ✅ ambil dari res.data.testimoni
+      if (myTestimoni) {
+        const res = await axios.put(`/api/testimoni/${myTestimoni.id}`, {
+          ...form,
+          rating,
+        });
+        updatedData = res.data.testimoni; // ✅ ambil dari res.data.testimoni
 
-      setTestimonials((prev) =>
-        prev.map((t) => (t.id === updatedData.id ? updatedData : t))
-      );
-      setMyTestimoni(updatedData); // ✅ sekarang ID tetap ada
+        setTestimonials((prev) =>
+          prev.map((t) => (t.id === updatedData.id ? updatedData : t))
+        );
+        setMyTestimoni(updatedData); // ✅ sekarang ID tetap ada
 
-      setAlert({ title: "Berhasil", message: "Testimoni berhasil diperbarui." });
-    } else {
-      const res = await axios.post("/api/testimoni", { ...form, rating });
-      updatedData = res.data.testimoni;
+        setAlert({
+          title: "Berhasil",
+          message: "Testimoni berhasil diperbarui.",
+        });
+      } else {
+        const res = await axios.post("/api/testimoni", { ...form, rating });
+        updatedData = res.data.testimoni;
 
-      setTestimonials((prev) => [updatedData, ...prev]);
-      setMyTestimoni(updatedData);
+        setTestimonials((prev) => [updatedData, ...prev]);
+        setMyTestimoni(updatedData);
 
-      setAlert({ title: "Berhasil", message: "Testimoni berhasil ditambahkan." });
+        setAlert({
+          title: "Berhasil",
+          message: "Testimoni berhasil ditambahkan.",
+        });
+      }
+
+      setForm({ name: "", message: "" });
+      setRating(0);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        title: "Gagal",
+        message: "Terjadi kesalahan saat menyimpan testimoni.",
+      });
     }
-
-    setForm({ name: "", message: "" });
-    setRating(0);
-    setIsModalOpen(false);
-  } catch (err) {
-    console.error(err);
-    setAlert({ title: "Gagal", message: "Terjadi kesalahan saat menyimpan testimoni." });
-  }
-};
-
+  };
 
   // Hapus testimoni
   const handleDelete = async () => {
@@ -212,7 +236,10 @@ const handleSubmit = async (e) => {
       setMyTestimoni(null);
       setAlert({ title: "Dihapus", message: "Testimoni berhasil dihapus." });
     } catch (err) {
-      setAlert({ title: "Gagal", message: "Tidak dapat menghapus testimoni. Coba lagi nanti." });
+      setAlert({
+        title: "Gagal",
+        message: "Tidak dapat menghapus testimoni. Coba lagi nanti.",
+      });
     } finally {
       setConfirmDelete(false);
     }
@@ -232,53 +259,71 @@ const handleSubmit = async (e) => {
 
   return (
     <section className="py-12">
-      <h2 className="text-3xl font-bold text-slate-800 text-center mb-10">Testimoni Pelanggan</h2>
+      <h2 className="text-3xl font-bold text-slate-800 text-center mb-10">
+        Testimoni Pelanggan
+      </h2>
 
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide p-4" id="testimonial-scroll">
-        {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-slate-100 md:w-72 h-48 sm:w-60 rounded-2xl animate-pulse" />
-            ))
-          : testimonials.map((t) => (
-              <Card
-                key={t.id}
-                className="md:min-h-72 min-h-60 min-w-50 md:min-w-72 max-w-72 transition-all p-2 md:p-4 flex flex-col justify-between"
-              >
-                <div className="flex-1 flex flex-col justify-center">
-                  <p className="text-slate-700 text-sm mb-4 text-center">“{t.message}”</p>
+      <div
+        className="flex gap-4 overflow-x-auto scrollbar-hide p-4"
+        id="testimonial-scroll"
+      >
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-slate-100 md:w-72 h-48 sm:w-60 rounded-2xl animate-pulse"
+            />
+          ))
+        ) : testimonials.length > 0 ? (
+          testimonials.map((t) => (
+            <Card
+              key={t.id}
+              className="md:min-h-72 min-h-60 min-w-50 md:min-w-72 max-w-72 transition-all p-2 md:p-4 flex flex-col justify-between"
+            >
+              <div className="flex-1 flex flex-col justify-center">
+                <p className="text-slate-700 text-sm mb-4 text-center">
+                  “{t.message}”
+                </p>
+              </div>
+
+              <div>
+                <div className="flex justify-center mb-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-5 h-5 ${
+                        i < t.rating
+                          ? "text-yellow-400 fill-yellow-400"
+                          : "text-slate-300"
+                      }`}
+                    />
+                  ))}
                 </div>
 
-                <div>
-                  <div className="flex justify-center mb-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-5 h-5 ${
-                          i < t.rating ? "text-yellow-400 fill-yellow-400" : "text-slate-300"
-                        }`}
-                      />
-                    ))}
+                <div className="flex gap-2 items-center mt-2 border-t border-slate-200 pt-2 md:pt-4">
+                  <div
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm"
+                    style={{ backgroundColor: stringToColor(t.name || "A") }}
+                  >
+                    {(t.name || "?").charAt(0).toUpperCase()}
                   </div>
-
-                  <div className="flex gap-2 items-center mt-2 border-t border-slate-200 pt-2 md:pt-4">
-                    <div
-                      className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm"
-                      style={{ backgroundColor: stringToColor(t.name || "A") }}
-                    >
-                      {(t.name || "?").charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex flex-col">
-                      <h4 className="text-xs md:text-sm font-semibold text-slate-800 leading-tight">
-                        {t.name}
-                      </h4>
-                      <p className="text-xs text-slate-400">
-                        {new Date(t.createdAt).toLocaleDateString("id-ID")}
-                      </p>
-                    </div>
+                  <div className="flex flex-col">
+                    <h4 className="text-xs md:text-sm font-semibold text-slate-800 leading-tight">
+                      {t.name}
+                    </h4>
+                    <p className="text-xs text-slate-400">
+                      {new Date(t.createdAt).toLocaleDateString("id-ID")}
+                    </p>
                   </div>
                 </div>
-              </Card>
-            ))}
+              </div>
+            </Card>
+          ))
+        ) : (
+          <div className="w-full flex justify-center mt-10">
+            <NoData message="Belum ada testimoni." />
+          </div>
+        )}
       </div>
 
       {!loading && (

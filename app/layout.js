@@ -2,7 +2,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LayoutClient from "@/component/layout/layout";
-import ConfigProvider from "@/lib/config";
+import { ConfigProvider } from "@/lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export async function generateMetadata() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/config`, {
-      cache: 'no-store', // untuk SSR (bisa juga pakai 'force-cache' tergantung kebutuhan)
+      cache: "no-store", // untuk SSR (bisa juga pakai 'force-cache' tergantung kebutuhan)
     });
 
     if (!res.ok) {
@@ -43,10 +43,12 @@ export async function generateMetadata() {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <LayoutClient>
-          <ConfigProvider>{children}</ConfigProvider>
-        </LayoutClient>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ConfigProvider>
+          <LayoutClient>{children}</LayoutClient>
+        </ConfigProvider>
       </body>
     </html>
   );

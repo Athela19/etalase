@@ -62,7 +62,7 @@ export default function ProductsPage() {
   // === RENDER ===
   if (loading)
     return (
-      <main className="max-w-6xl mx-auto p-6 pt-24 flex items-center gap-2 text-slate-600">
+      <main className="max-w-6xl mx-auto p-6 pt-24 flex items-center justify-center gap-2 text-slate-600">
         <Loader2 className="w-4 h-4 animate-spin" /> Memuat…
       </main>
     );

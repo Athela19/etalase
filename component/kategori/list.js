@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import NoData from "../reusable/noData";
 
 export default function ListKategori() {
   const [categories, setCategories] = useState([]);
@@ -15,7 +16,9 @@ export default function ListKategori() {
 
         // Ambil kategori unik dari semua produk aktif
         const uniqueCategories = [
-          ...new Set(data.filter((p) => p.active).map((p) => p.category || "Lainnya")),
+          ...new Set(
+            data.filter((p) => p.active).map((p) => p.category || "Lainnya")
+          ),
         ];
         setCategories(uniqueCategories);
       } catch (err) {
@@ -33,11 +36,11 @@ export default function ListKategori() {
     "bg-orange-500",
     "bg-red-500",
   ];
- 
+
   if (categories.length === 0)
     return (
-      <div className="flex items-center justify-center h-screen text-gray-600">
-        Tidak ada kategori ditemukan.
+      <div className="pt-24">
+        <NoData message="Belum ada kategori" />
       </div>
     );
 
@@ -56,7 +59,9 @@ export default function ListKategori() {
           return (
             <div
               key={idx}
-              onClick={() => router.push(`/kategori/${encodeURIComponent(category)}`)}
+              onClick={() =>
+                router.push(`/kategori/${encodeURIComponent(category)}`)
+              }
               className={`cursor-pointer ${bgColor} hover:opacity-90 hover:-translate-y-1 transition-all 
                           p-4 flex items-center justify-start rounded-lg shadow-lg h-30`}
             >
