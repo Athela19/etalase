@@ -173,7 +173,11 @@ export default function ProdukPage({ productId }) {
               <div className="flex gap-2">
                 {product.whatsapp && (
                   <a
-                    href={toUrl(product.whatsapp)}
+                    href={`https://wa.me/${
+                      product.whatsapp
+                    }?text=${encodeURIComponent(
+                      `Halo, saya ingin membeli produk ${product.name}. Apakah masih tersedia?`
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:scale-110 transition-transform border border-primary hover:bg-primary/20 rounded-lg p-2"
@@ -228,8 +232,8 @@ export default function ProdukPage({ productId }) {
               >
                 <ShoppingCart size={20} />
                 {isInWishlist
-                  ? "Hapus dari keranjang"
-                  : "Tambahkan ke keranjang"}
+                  ? "Hapus dari Wishlist"
+                  : "Tambahkan ke Wishlist"}
               </button>
             </div>
           </div>
