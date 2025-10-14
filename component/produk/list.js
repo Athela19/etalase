@@ -5,6 +5,7 @@ import { Plus, Search,} from "lucide-react";
 import axios from "axios";
 import ConfirmModal from "@/component/reusable/modal";
 import Card from "@/component/reusable/card";
+import NoData from "../reusable/noData";
 
 
 export default function ProductList({
@@ -145,8 +146,8 @@ export default function ProductList({
             );
           })
         ) : (
-          <div className="col-span-full text-center py-10 text-slate-500 border border-dashed rounded-xl">
-            Tidak ada data produk.
+          <div className="flex items-center justify-center col-span-full">
+            <NoData message="Belum menambahkan produk"/>
           </div>
         )}
       </div>

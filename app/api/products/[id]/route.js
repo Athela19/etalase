@@ -115,7 +115,7 @@ export async function PUT(req, { params }) {
 // ========================
 export async function DELETE(_req, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const productId = Number(id);
     if (!Number.isInteger(productId)) throw new Error("ID tidak valid");
 
