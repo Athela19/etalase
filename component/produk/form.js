@@ -1,7 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Save, Loader2, UploadCloud, ChevronDown } from "lucide-react";
+import {
+  Save,
+  Loader2,
+  UploadCloud,
+  ChevronDown,
+} from "lucide-react";
 import { UploadButton } from "@uploadthing/react";
 import Image from "next/image";
 
@@ -15,6 +20,7 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
     price: "",
     image: [],
     description: "",
+    active: true,
   };
   const [form, setForm] = useState(editing || empty);
   const [saving, setSaving] = useState(false);
@@ -45,7 +51,10 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
     e.preventDefault();
     setSaving(true);
     try {
-      const payload = { ...form, price: parseFloat(form.price || 0) };
+      const payload = {
+        ...form,
+        price: parseFloat(form.price || 0),
+      };
       if (editing) await axios.put(`/api/products/${editing.id}`, payload);
       else await axios.post("/api/products", payload);
       onSuccess();
@@ -60,32 +69,23 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
     setForm((s) => ({ ...s, image: s.image.filter((i) => i !== url) }));
   }
 
-  // === Tambah kategori baru ===
-  function addNewCategory() {
-    if (newCategory.trim() === "") return;
-    if (!categories.includes(newCategory.trim())) {
-      setCategories((prev) => [newCategory.trim(), ...prev]);
-    }
-    setForm((s) => ({ ...s, category: newCategory.trim() }));
-    setNewCategory("");
-    setShowDropdown(false);
-  }
-
   return (
     <main className="p-6 pt-24">
-      <div className="flex items-center mb-4">
+      <div className="flex items-center">
         <h3 className="font-semibold text-lg">
           {editing ? "Edit Produk" : "Tambah Produk"}
         </h3>
       </div>
 
-      <form onSubmit={onSubmit} className="grid md:grid-cols-2 gap-8">
-        {/* === Kolom Kiri === */}
-        <div className="space-y-4">
+      <form onSubmit={onSubmit} className="grid md:grid-cols-2 gap-2 md:gap-4 mt-2">
+        {/* === KIRI: Informasi Utama === */}
+        <div className="space-y-5">
           <Input
             label="Nama Produk"
             value={form.name}
-            onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+            onChange={(e) =>
+              setForm((s) => ({ ...s, name: e.target.value }))
+            }
             required
           />
           <Input
@@ -98,16 +98,20 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
           <Input
             label="Link TikTok"
             value={form.tiktok}
-            onChange={(e) => setForm((s) => ({ ...s, tiktok: e.target.value }))}
+            onChange={(e) =>
+              setForm((s) => ({ ...s, tiktok: e.target.value }))
+            }
           />
           <Input
             label="Link Shopee"
             type="url"
             value={form.shopee}
-            onChange={(e) => setForm((s) => ({ ...s, shopee: e.target.value }))}
+            onChange={(e) =>
+              setForm((s) => ({ ...s, shopee: e.target.value }))
+            }
           />
 
-          {/* === Kategori dan Harga dalam satu baris === */}
+          {/* === Kategori & Harga === */}
           <div className="flex gap-4">
             {/* Kategori */}
             <div className="w-1/2 relative">
@@ -128,7 +132,7 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
               </button>
 
               {showDropdown && (
-                <div className="pr-1 absolute z-20 bg-white border rounded-md shadow-md w-full mt-1 ">
+                <div className="absolute z-20 bg-white border rounded-md shadow-md w-full mt-1 pr-1">
                   <div className="max-h-42 overflow-auto">
                     {/* Input tambah kategori baru */}
                     <div className="px-3 py-2">
@@ -141,8 +145,8 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
-                            if (newCategory.trim() !== "") {
-                              const val = newCategory.trim();
+                            const val = newCategory.trim();
+                            if (val !== "") {
                               if (!categories.includes(val)) {
                                 setCategories((prev) => [val, ...prev]);
                               }
@@ -165,7 +169,9 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
                             setShowDropdown(false);
                           }}
                           className={`px-3 py-2 text-sm cursor-pointer hover:bg-primary hover:text-white ${
-                            form.category === c ? "bg-primary text-white" : ""
+                            form.category === c
+                              ? "bg-primary text-white"
+                              : ""
                           }`}
                         >
                           {c}
@@ -196,9 +202,36 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
               className="w-1/2"
             />
           </div>
+
+          {/* Toggle Active */}
+          <div className="flex items-center gap-3 mt-4">
+            <label className="text-sm text-slate-600">Status</label>
+            <button
+              type="button"
+              onClick={() =>
+                setForm((s) => ({ ...s, active: !s.active }))
+              }
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                form.active ? "bg-primary" : "bg-slate-300"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                  form.active ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+            <span
+              className={`text-sm ${
+                form.active ? "text-primary" : "text-slate-500"
+              }`}
+            >
+              {form.active ? "Aktif" : "Nonaktif"}
+            </span>
+          </div>
         </div>
 
-        {/* === Kolom Kanan === */}
+        {/* === KANAN: Deskripsi & Gambar === */}
         <div className="space-y-5">
           <div>
             <label className="block text-sm text-slate-600 mb-1">
@@ -219,7 +252,6 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
             <label className="block text-sm mb-1 text-slate-600">
               Upload Gambar
             </label>
-
             <div className="flex items-center gap-2">
               <UploadButton
                 endpoint="productImage"
@@ -230,7 +262,9 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
                     image: [...s.image, ...urls].slice(0, 5),
                   }));
                 }}
-                onUploadError={(err) => alert(`Upload gagal: ${err.message}`)}
+                onUploadError={(err) =>
+                  alert(`Upload gagal: ${err.message}`)
+                }
                 appearance={{
                   container: "relative inline-flex items-center",
                   button:
@@ -242,7 +276,7 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
                     return (
                       <>
                         <UploadCloud className="w-4 h-4" />
-                        {ready ? "Upload Gambar" : "Menyiapkan..."}
+                        {ready ? "Upload" : "Menyiapkan..."}
                       </>
                     );
                   },
@@ -256,8 +290,8 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
                   <Image
                     src={url}
                     alt="Gambar produk"
-                    width={96} // sama dengan w-24
-                    height={96} // sama dengan h-24
+                    width={96}
+                    height={96}
                     className="object-cover rounded border"
                   />
                   <button
@@ -274,7 +308,7 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
         </div>
 
         {/* Tombol Aksi */}
-        <div className="col-span-full flex items-center justify-end gap-2">
+        <div className="col-span-full flex justify-end gap-2">
           <button
             type="button"
             onClick={onCancel}
@@ -300,7 +334,7 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
   );
 }
 
-// Reusable Input
+// === Reusable Input ===
 function Input({ label, className = "", ...props }) {
   return (
     <div className={className}>

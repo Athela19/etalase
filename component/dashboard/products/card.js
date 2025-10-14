@@ -15,7 +15,7 @@ export default function ProductCard({ product }) {
   useEffect(() => {
     loadWishlist();
   }, [loadWishlist]);
-
+  if (!product?.active) return null;
   const isLoved = wishlist.some((item) => item.id === product.id);
 
   const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
