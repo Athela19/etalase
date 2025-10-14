@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { Pencil, Trash2, Plus, Search, Heart } from "lucide-react";
+import { useState,} from "react";
+import { Plus, Search,} from "lucide-react";
 import axios from "axios";
 import ConfirmModal from "@/component/reusable/modal";
 import Card from "@/component/reusable/card";
@@ -43,21 +43,21 @@ export default function ProductList({
           <p className="text-sm text-slate-500">Total: {items.length}</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-center w-full sm:w-auto">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari produk..."
-              className="w-72 rounded-full border border-slate-300 pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
+              className="w-full md:w-72 rounded-full border border-slate-300 pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
             />
           </div>
           <button
             onClick={onCreate}
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-white text-sm font-semibold hover:bg-primary/90"
           >
-            <Plus className="w-4 h-4" /> Tambah
+            <Plus className="w-4 h-4" />Tambah
           </button>
         </div>
       </header>
