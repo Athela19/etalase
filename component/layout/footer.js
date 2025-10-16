@@ -36,7 +36,7 @@ export default function Footer() {
     { label: "Beranda", href: "/", role: "all" },
     { label: "Wishlist", href: "/wishlist", role: "all" },
     { label: "Kategori", href: "/kategori", role: "all" },
-    { label: "Kelola Produk", href: "/produk/kelola", role: "user" },
+    { label: "Kelola Produk", href: "/etalase-admin/produk", role: "user" },
     { label: "Settings", href: "/settings", role: "user" },
   ];
 

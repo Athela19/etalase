@@ -1,12 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Save,
-  Loader2,
-  UploadCloud,
-  ChevronDown,
-} from "lucide-react";
+import { Save, Loader2, UploadCloud, ChevronDown } from "lucide-react";
 import { UploadButton } from "@uploadthing/react";
 import Image from "next/image";
 
@@ -77,15 +72,16 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
         </h3>
       </div>
 
-      <form onSubmit={onSubmit} className="grid md:grid-cols-2 gap-2 md:gap-4 mt-2">
+      <form
+        onSubmit={onSubmit}
+        className="grid md:grid-cols-2 gap-2 md:gap-4 mt-2"
+      >
         {/* === KIRI: Informasi Utama === */}
         <div className="space-y-5">
           <Input
             label="Nama Produk"
             value={form.name}
-            onChange={(e) =>
-              setForm((s) => ({ ...s, name: e.target.value }))
-            }
+            onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
             required
           />
           <Input
@@ -98,17 +94,13 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
           <Input
             label="Link TikTok"
             value={form.tiktok}
-            onChange={(e) =>
-              setForm((s) => ({ ...s, tiktok: e.target.value }))
-            }
+            onChange={(e) => setForm((s) => ({ ...s, tiktok: e.target.value }))}
           />
           <Input
             label="Link Shopee"
             type="url"
             value={form.shopee}
-            onChange={(e) =>
-              setForm((s) => ({ ...s, shopee: e.target.value }))
-            }
+            onChange={(e) => setForm((s) => ({ ...s, shopee: e.target.value }))}
           />
 
           {/* === Kategori & Harga === */}
@@ -132,56 +124,56 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
               </button>
 
               {showDropdown && (
-                <div className="absolute z-20 bg-white border rounded-md shadow-md w-full mt-1 pr-1">
-                  <div className="max-h-42 overflow-auto">
-                    {/* Input tambah kategori baru */}
+                <div className="absolute z-50 bg-white border rounded-md shadow-md w-full mt-1 pr-1">
+                  <div className="max-h-52 overflow-auto overscroll-contain touch-auto">
+                    {/* Input pencarian kategori */}
                     <div className="px-3 py-2">
                       <input
                         type="text"
                         value={newCategory}
-                        onChange={(e) => setNewCategory(e.target.value)}
-                        placeholder="Tambah kategori baru..."
-                        className="w-full text-sm rounded outline-none"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            const val = newCategory.trim();
-                            if (val !== "") {
-                              if (!categories.includes(val)) {
-                                setCategories((prev) => [val, ...prev]);
-                              }
-                              setForm((s) => ({ ...s, category: val }));
-                              setNewCategory("");
-                              setShowDropdown(false);
-                            }
-                          }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const trimmed = val.trim();
+                          setNewCategory(val);
+                          setForm((s) => ({ ...s, category: trimmed }));
                         }}
+                        placeholder="Cari atau tambah kategori baru..."
+                        className="w-full text-sm rounded outline-none"
                       />
                     </div>
 
-                    {/* Daftar kategori */}
-                    {categories.length > 0 ? (
-                      categories.map((c) => (
-                        <div
-                          key={c}
-                          onClick={() => {
-                            setForm((s) => ({ ...s, category: c }));
-                            setShowDropdown(false);
-                          }}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-primary hover:text-white ${
-                            form.category === c
-                              ? "bg-primary text-white"
-                              : ""
-                          }`}
-                        >
-                          {c}
-                        </div>
-                      ))
-                    ) : (
-                      <p className="px-3 py-2 text-sm text-slate-500">
-                        Tidak ada kategori
-                      </p>
-                    )}
+                    {/* Filter daftar kategori */}
+                    {(() => {
+                      const filtered = newCategory.trim()
+                        ? categories.filter((c) =>
+                            c
+                              .toLowerCase()
+                              .includes(newCategory.trim().toLowerCase())
+                          )
+                        : categories;
+
+                      return filtered.length > 0 ? (
+                        filtered.map((c) => (
+                          <div
+                            key={c}
+                            onClick={() => {
+                              setForm((s) => ({ ...s, category: c }));
+                              setNewCategory(c);
+                              setShowDropdown(false);
+                            }}
+                            className={`px-3 py-2 text-sm cursor-pointer hover:bg-primary hover:text-white ${
+                              form.category === c ? "bg-primary text-white" : ""
+                            }`}
+                          >
+                            {c}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="px-3 py-2 text-sm text-slate-500">
+                          Tidak ada kategori cocok
+                        </p>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
@@ -208,9 +200,7 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
             <label className="text-sm text-slate-600">Status</label>
             <button
               type="button"
-              onClick={() =>
-                setForm((s) => ({ ...s, active: !s.active }))
-              }
+              onClick={() => setForm((s) => ({ ...s, active: !s.active }))}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
                 form.active ? "bg-primary" : "bg-slate-300"
               }`}
@@ -262,9 +252,7 @@ export default function ProductForm({ editing, onSuccess, onCancel }) {
                     image: [...s.image, ...urls].slice(0, 5),
                   }));
                 }}
-                onUploadError={(err) =>
-                  alert(`Upload gagal: ${err.message}`)
-                }
+                onUploadError={(err) => alert(`Upload gagal: ${err.message}`)}
                 appearance={{
                   container: "relative inline-flex items-center",
                   button:

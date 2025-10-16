@@ -6,6 +6,8 @@ import axios from "axios";
 import Card from "../reusable/card";
 import ConfirmModal from "../reusable/modal";
 import NoData from "../reusable/noData";
+import Link from "next/link";
+import Cookies from "js-cookie";
 
 /* ===================== 🔸 MODAL TESTIMONI 🔸 ===================== */
 function ModalTestimoni({
@@ -130,6 +132,19 @@ export default function TestimoniPage() {
   const [rating, setRating] = useState(0);
   const [alert, setAlert] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUser = () => {
+      const session = Cookies.get("session");
+      if (session === "logged-in")
+        setUser({ name: "Admin", email: "admin@etalase.com" });
+      else setUser(null);
+    };
+    checkUser();
+    window.addEventListener("user-login", checkUser);
+    return () => window.removeEventListener("user-login", checkUser);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -327,7 +342,7 @@ export default function TestimoniPage() {
       </div>
 
       {!loading && (
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 flex flex-col md:flex-row justify-center items-center gap-3">
           {myTestimoni ? (
             <div className="flex justify-center gap-3">
               <button
@@ -351,6 +366,17 @@ export default function TestimoniPage() {
             >
               Tambahkan Testimoni
             </button>
+          )}
+          {/* Tambahan tombol "Kelola Testimoni" jika user adalah admin */}
+          {user && (
+            <div>
+              <Link
+                href="/etalase-admin/testimoni"
+                className="inline-block bg-background hover:bg-primary text-primary hover:text-white border border-primary font-semibold px-4 py-2 rounded-xl"
+              >
+                Kelola Testimoni
+              </Link>
+            </div>
           )}
         </div>
       )}

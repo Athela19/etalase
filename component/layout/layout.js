@@ -17,7 +17,7 @@ export default function LayoutClient({ children }) {
   } else if (
     logoutPaths.includes(pathname) ||
     pathname.startsWith("/kategori/") ||
-    pathname.startsWith("/produk/")
+    pathname.startsWith("/etalase-admin/")
   ) {
     mode = "logout";
   }

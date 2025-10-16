@@ -51,33 +51,19 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     const { id } = await params;
-    const cookieHeader = req.headers.get("cookie") || "";
-    const tokenCookie = cookieHeader
-      .split("; ")
-      .find((c) => c.startsWith("tokenTestimoni="));
 
-    if (!tokenCookie) {
-      return NextResponse.json(
-        { error: "Tidak ada token testimoni di cookie" },
-        { status: 401 }
-      );
-    }
-
-    const token = tokenCookie.split("=")[1];
-
-    // Cek apakah testimoni benar milik token ini
-    const testimoni = await prisma.testimoni.findFirst({
-      where: { id: Number(id), token },
+    // Langsung hapus berdasarkan ID tanpa verifikasi token
+    const existing = await prisma.testimoni.findUnique({
+      where: { id: Number(id) },
     });
 
-    if (!testimoni) {
+    if (!existing) {
       return NextResponse.json(
-        { error: "Testimoni tidak ditemukan atau bukan milik Anda" },
+        { error: "Testimoni tidak ditemukan" },
         { status: 404 }
       );
     }
 
-    // Hapus testimoni
     await prisma.testimoni.delete({
       where: { id: Number(id) },
     });
