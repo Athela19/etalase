@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 const ADMIN = {
-  email: "admin@etalase.com",
-  password: "9or3n9p1s*4an9",
+  email: process.env.USER,
+  password: process.env.PASSWORD,
 };
 
 export async function POST(req) {
